@@ -1,0 +1,6 @@
+services:
+    php_test_generator.resolver.short_class_name:
+        class: Zenas\PHPTestGenerator\Resolver\ShortClassNameResolver
+
+    php_test_generator.resolver.constructor:
+        class: Zenas\PHPTestGenerator\Resolver\ConstructorResolver

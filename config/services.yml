@@ -1,0 +1,71 @@
+imports:
+    - { resource: 'services/*.yml' }
+
+services:
+    php_test_generator.traverser.node:
+        class: PhpParser\NodeTraverser
+
+    php_test_generator.analyzer.method:
+        class: Zenas\PHPTestGenerator\Analyzer\MethodAnalyzer
+
+    php_test_generator.property_comment_generator:
+        class: Zenas\PHPTestGenerator\Generator\PHPUnit\PropertyCommentGenerator
+        arguments:
+            - '@php_test_generator.resolver.short_class_name'
+
+    php_test_generator.generator.phpunit_test_method:
+        class: Zenas\PHPTestGenerator\Generator\PHPUnit\PHPUnitTestMethodGenerator
+        arguments:
+            - '@php_test_generator.factory.builder'
+            - '@php_test_generator.factory.chain_mock_value'
+            - '@php_test_generator.factory.method_arguments'
+
+    php_test_generator.generator.phpunit_test_class:
+        class: Zenas\PHPTestGenerator\Generator\PHPUnit\PHPUnitTestClassGenerator
+        arguments:
+            - '@php_test_generator.factory.builder'
+            - '@php_test_generator.generator.phpunit_test_method'
+            - '@php_test_generator.factory.chain_dependency_value'
+            - '@php_test_generator.property_comment_generator'
+
+    php_test_generator.analyzer.class:
+        public: true
+        class: Zenas\PHPTestGenerator\Analyzer\ClassAnalyzer
+        arguments:
+            - '@php_test_generator.resolver.short_class_name'
+            - '@php_test_generator.factory.class_model'
+            - '@php_test_generator.generator.phpunit_test_class'
+            - '@php_test_generator.factory.ast_container'
+            - '@php_test_generator.analyzer.method'
+
+    php_test_generator.node_finder:
+        class: PhpParser\NodeFinder
+
+    php_test_generator.extractor.property_variable_assignment:
+        class: Zenas\PHPTestGenerator\Extractor\PropertyVariableAssignmentExtractor
+
+    php_test_generator.extractor.reflection_extractor:
+        class: Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor
+
+    php_test_generator.extractor.php_doc_extractor:
+        class: Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor
+
+    php_test_generator.extractor.property_info_extractor:
+        class: Symfony\Component\PropertyInfo\PropertyInfoExtractor
+        arguments:
+            - []
+            -
+                - '@php_test_generator.extractor.reflection_extractor'
+                - '@php_test_generator.extractor.php_doc_extractor'
+
+    php_test_generator.extractor.static_call_arguments:
+        class: Zenas\PHPTestGenerator\Extractor\StaticCallArgumentsExtractor
+
+    php_test_generator.writer.test_class:
+        public: true
+        class: Zenas\PHPTestGenerator\Writer\TestClassWriter
+        arguments:
+            - '@php_test_generator.filesystem'
+
+    php_test_generator.filesystem:
+        class: Symfony\Component\Filesystem\Filesystem

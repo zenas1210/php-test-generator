@@ -1,0 +1,78 @@
+services:
+    php_test_generator.factory.scalar_value:
+        class: Zenas\PHPTestGenerator\Generator\PHPUnit\ScalarValueFactory
+
+    php_test_generator.factory.builder:
+        class: PhpParser\BuilderFactory
+
+    php_test_generator.factory.property:
+        class: Zenas\PHPTestGenerator\Factory\PropertyFactory
+        arguments:
+            - '@php_test_generator.extractor.property_info_extractor'
+            - '@php_test_generator.factory.type'
+
+    php_test_generator.factory.class_model:
+        class: Zenas\PHPTestGenerator\Factory\ClassModelFactory
+        arguments:
+            - '@php_test_generator.factory.property'
+            - '@php_test_generator.factory.property_assignment_map'
+            - '@php_test_generator.factory.parameter'
+
+    php_test_generator.factory.method_arguments:
+        class: Zenas\PHPTestGenerator\Generator\PHPUnit\MethodArgumentsFactory
+        arguments:
+            - '@php_test_generator.factory.chain_mock_value'
+
+    php_test_generator.factory.object_value:
+        class: Zenas\PHPTestGenerator\Generator\PHPUnit\ObjectValueFactory
+        arguments:
+            - '@php_test_generator.factory.method_arguments'
+            - '@php_test_generator.factory.builder'
+            - '@php_test_generator.resolver.short_class_name'
+            - '@php_test_generator.resolver.constructor'
+
+    php_test_generator.factory.mock_value:
+        class: Zenas\PHPTestGenerator\Generator\PHPUnit\MockValueFactory
+        arguments:
+            - '@php_test_generator.factory.builder'
+            - '@php_test_generator.resolver.short_class_name'
+
+    php_test_generator.factory.parser:
+        class: PhpParser\ParserFactory
+
+    php_test_generator.factory.ast_container:
+        class: Zenas\PHPTestGenerator\Factory\AstContainerFactory
+        arguments:
+            - '@php_test_generator.node_finder'
+            - '@php_test_generator.factory.parser'
+
+    php_test_generator.factory.chain_dependency_value:
+        class: Zenas\PHPTestGenerator\Generator\PHPUnit\ChainValueFactory
+        calls:
+            -   setFactories:
+                    -
+                        - '@php_test_generator.factory.scalar_value'
+                        - '@php_test_generator.factory.mock_value'
+
+    php_test_generator.factory.chain_mock_value:
+        class: Zenas\PHPTestGenerator\Generator\PHPUnit\ChainValueFactory
+        calls:
+            -   setFactories:
+                    -
+                        - '@php_test_generator.factory.scalar_value'
+                        - '@php_test_generator.factory.object_value'
+                        - '@php_test_generator.factory.mock_value'
+
+    php_test_generator.factory.property_assignment_map:
+        class: Zenas\PHPTestGenerator\Factory\PropertyAssignmentMapFactory
+        arguments:
+            - '@php_test_generator.extractor.property_variable_assignment'
+            - '@php_test_generator.extractor.static_call_arguments'
+
+    php_test_generator.factory.type:
+        class: Zenas\PHPTestGenerator\Factory\TypeFactory
+
+    php_test_generator.factory.parameter:
+        class: Zenas\PHPTestGenerator\Factory\ParameterFactory
+        arguments:
+            - '@php_test_generator.factory.type'
