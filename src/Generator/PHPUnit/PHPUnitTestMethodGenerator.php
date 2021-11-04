@@ -41,7 +41,7 @@ class PHPUnitTestMethodGenerator
 
     public function getBaseBuilder(Method $method): ParserMethod
     {
-        return $this->factory->method($method->getReflection()->getName())
+        return $this->factory->method('test' . ucfirst($method->getReflection()->getName()))
             ->makePublic()
             ->setReturnType('void');
     }
