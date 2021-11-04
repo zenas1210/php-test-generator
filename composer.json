@@ -10,9 +10,10 @@
         }
     ],
     "require": {
-        "ext-json": "*",
         "php": "^7.4",
+        "ext-json": "*",
         "nikic/php-parser": "^4.10",
+        "phpdocumentor/reflection-docblock": "^5.3",
         "symfony/config": "^5.3",
         "symfony/console": "^4.4|^5.3",
         "symfony/dependency-injection": "^5.3",
