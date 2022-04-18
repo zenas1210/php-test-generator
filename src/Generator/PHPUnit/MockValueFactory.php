@@ -8,8 +8,11 @@ use Zenas\PHPTestGenerator\Resolver\ShortClassNameResolver;
 
 class MockValueFactory implements ValueFactoryInterface
 {
-    private BuilderFactory $factory;
-    private ShortClassNameResolver $shortClassNameProvider;
+    /** @var BuilderFactory */
+    private $factory;
+
+    /** @var ShortClassNameResolver */
+    private $shortClassNameProvider;
 
     public function __construct(BuilderFactory $factory, ShortClassNameResolver $shortClassNameProvider)
     {

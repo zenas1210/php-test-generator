@@ -8,7 +8,8 @@ use Zenas\PHPTestGenerator\Model\TestClass;
 
 class ShortClassNameResolver
 {
-    public TestClass $class;
+    /** @var TestClass */
+    public $class;
 
     public function setClass(TestClass $class): void
     {

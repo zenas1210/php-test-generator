@@ -10,10 +10,17 @@ use Zenas\PHPTestGenerator\Resolver\ShortClassNameResolver;
 
 class ObjectValueFactory implements ValueFactoryInterface
 {
-    private MethodArgumentsFactory $methodArgumentsFactory;
-    private BuilderFactory $factory;
-    private ShortClassNameResolver $shortClassNameProvider;
-    private ConstructorResolver $constructorResolver;
+    /** @var MethodArgumentsFactory */
+    private $methodArgumentsFactory;
+
+    /** @var BuilderFactory */
+    private $factory;
+
+    /** @var ShortClassNameResolver */
+    private $shortClassNameProvider;
+
+    /** @var ConstructorResolver */
+    private $constructorResolver;
 
     public function __construct(
         MethodArgumentsFactory $methodArgumentsFactory,

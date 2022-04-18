@@ -11,8 +11,11 @@ use Zenas\PHPTestGenerator\Model\Property;
 
 class PropertyFactory
 {
-    private PropertyInfoExtractor $extractor;
-    private TypeFactory $typeFactory;
+    /** @var PropertyInfoExtractor */
+    private $extractor;
+
+    /** @var TypeFactory */
+    private $typeFactory;
 
     public function __construct(PropertyInfoExtractor $extractor, TypeFactory $typeFactory)
     {

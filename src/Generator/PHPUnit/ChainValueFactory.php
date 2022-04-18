@@ -6,10 +6,8 @@ namespace Zenas\PHPTestGenerator\Generator\PHPUnit;
 
 class ChainValueFactory implements ValueFactoryInterface
 {
-    /**
-     * @var ValueFactoryInterface[]
-     */
-    private array $factories;
+    /** @var ValueFactoryInterface[] */
+    private $factories;
 
     public function __construct(array $factories = [])
     {

@@ -16,7 +16,8 @@ use Zenas\PHPTestGenerator\Model\Mock;
 
 class DependencyNodeVisitor extends NodeVisitorAbstract
 {
-    private Method $method;
+    /** @var Method */
+    private $method;
 
     public function __construct(Method $method)
     {

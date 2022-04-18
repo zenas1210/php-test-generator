@@ -6,8 +6,11 @@ namespace Zenas\PHPTestGenerator\Model;
 
 class GeneratedTestClass
 {
-    private string $testClassName;
-    private string $code;
+    /** @var string */
+    private $testClassName;
+
+    /** @var string */
+    private $code;
 
     public function __construct(string $testClassName, string $code)
     {

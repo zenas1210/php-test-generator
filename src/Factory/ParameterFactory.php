@@ -7,7 +7,8 @@ use Zenas\PHPTestGenerator\Model\Parameter;
 
 class ParameterFactory
 {
-    private TypeFactory $typeFactory;
+    /** @var TypeFactory */
+    private $typeFactory;
 
     public function __construct(TypeFactory $typeFactory)
     {

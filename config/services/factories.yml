@@ -1,6 +1,8 @@
 services:
     php_test_generator.factory.scalar_value:
         class: Zenas\PHPTestGenerator\Generator\PHPUnit\ScalarValueFactory
+        arguments:
+            - '@php_test_generator.factory.builder'
 
     php_test_generator.factory.builder:
         class: PhpParser\BuilderFactory

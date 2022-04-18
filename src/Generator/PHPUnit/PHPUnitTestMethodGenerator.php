@@ -13,9 +13,14 @@ use Zenas\PHPTestGenerator\Model\TestClass;
 
 class PHPUnitTestMethodGenerator
 {
-    private BuilderFactory $factory;
-    private ValueFactoryInterface $valueFactory;
-    private MethodArgumentsFactory $methodArgumentsFactory;
+    /** @var BuilderFactory */
+    private $factory;
+
+    /** @var ValueFactoryInterface */
+    private $valueFactory;
+
+    /** @var MethodArgumentsFactory */
+    private $methodArgumentsFactory;
 
     public function __construct(
         BuilderFactory         $factory,
@@ -82,7 +87,7 @@ class PHPUnitTestMethodGenerator
                     $this->factory->var('this'),
                     'atLeastOnce'
                 ),
-            ],
+            ]
         );
 
         $method = $this->factory->methodCall(

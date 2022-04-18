@@ -2,6 +2,8 @@
 
 namespace Zenas\PHPTestGenerator\Generator\PHPUnit;
 
+use PhpParser\BuilderFactory;
+
 class ScalarValueFactory implements ValueFactoryInterface
 {
     private const VALUES = [
@@ -13,8 +15,20 @@ class ScalarValueFactory implements ValueFactoryInterface
         'iterable' => [],
     ];
 
+    /** @var BuilderFactory */
+    private $factory;
+
+    public function __construct(BuilderFactory $factory)
+    {
+        $this->factory = $factory;
+    }
+
     public function getValueForType(?string $type)
     {
+        if ($type === 'object') {
+            return $this->factory->new('\stdClass');
+        }
+
         return self::VALUES[$type] ?? null;
     }
 

@@ -11,7 +11,8 @@ use Zenas\PHPTestGenerator\Model\Method;
 
 class ReturnStatementVisitor extends NodeVisitorAbstract
 {
-    private Method $method;
+    /** @var Method */
+    private $method;
 
     public function __construct(Method $method)
     {

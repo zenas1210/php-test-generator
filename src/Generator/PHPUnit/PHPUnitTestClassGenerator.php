@@ -15,10 +15,17 @@ use Zenas\PHPTestGenerator\Model\TestClass;
 
 class PHPUnitTestClassGenerator
 {
-    private BuilderFactory $factory;
-    private PHPUnitTestMethodGenerator $methodGenerator;
-    private ValueFactoryInterface $valueFactory;
-    private PropertyCommentGenerator $commentGenerator;
+    /** @var BuilderFactory */
+    private $factory;
+
+    /** @var PHPUnitTestMethodGenerator */
+    private $methodGenerator;
+
+    /** @var ValueFactoryInterface */
+    private $valueFactory;
+
+    /** @var PropertyCommentGenerator */
+    private $commentGenerator;
 
     public function __construct(
         BuilderFactory             $factory,
@@ -80,7 +87,7 @@ class PHPUnitTestClassGenerator
 
             $type = $parameter->getType();
             if ($type !== null) {
-                $statement->setDocComment($this->commentGenerator->generateComment($type));
+                $statement->setDocComment($this->commentGenerator->generateDependencyComment($type));
             }
 
             $builder->addStmt($statement);
@@ -93,7 +100,7 @@ class PHPUnitTestClassGenerator
     {
         $builder->addStmt(
             $this->factory->property($class->getTestPropertyName())
-                ->setType($class->getClass()->getReflection()->getShortName())
+                ->setDocComment($this->commentGenerator->generateClassComment($class->getClass()->getReflection()))
                 ->makePrivate()
         );
     }

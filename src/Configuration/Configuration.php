@@ -6,9 +6,14 @@ namespace Zenas\PHPTestGenerator\Configuration;
 
 class Configuration
 {
-    private string $sourceNamespace;
-    private string $testsNamespace;
-    private string $testsDir;
+    /** @var string */
+    private $sourceNamespace;
+
+    /** @var string */
+    private $testsNamespace;
+
+    /** @var string */
+    private $testsDir;
 
     public function __construct(string $sourceNamespace, string $testsNamespace, string $testsDir)
     {

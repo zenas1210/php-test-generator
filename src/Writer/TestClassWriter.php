@@ -11,7 +11,8 @@ use Zenas\PHPTestGenerator\Model\GeneratedTestClass;
 
 class TestClassWriter
 {
-    private Filesystem $filesystem;
+    /** @var Filesystem */
+    private $filesystem;
 
     public function __construct(Filesystem $filesystem)
     {

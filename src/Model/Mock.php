@@ -6,9 +6,14 @@ namespace Zenas\PHPTestGenerator\Model;
 
 class Mock
 {
-    private string $dependecy;
-    private string $method;
-    private ?string $variableType;
+    /** @var string */
+    private $dependecy;
+
+    /** @var string */
+    private $method;
+
+    /** @var string|null */
+    private $variableType;
 
     public function __construct(string $dependecy, string $method, ?string $variableType = null)
     {

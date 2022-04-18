@@ -11,8 +11,11 @@ use Zenas\PHPTestGenerator\Extractor\StaticCallArgumentsExtractor;
 
 class PropertyAssignmentMapFactory
 {
-    private PropertyVariableAssignmentExtractor $propertyAssignmentExtractor;
-    private StaticCallArgumentsExtractor $staticCallArgumentsExtractor;
+    /** @var PropertyVariableAssignmentExtractor */
+    private $propertyAssignmentExtractor;
+
+    /** @var StaticCallArgumentsExtractor */
+    private $staticCallArgumentsExtractor;
 
     public function __construct(
         PropertyVariableAssignmentExtractor $propertyAssignmentExtractor,

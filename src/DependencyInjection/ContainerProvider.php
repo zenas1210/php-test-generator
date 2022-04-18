@@ -9,7 +9,8 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
 class ContainerProvider
 {
-    private static ?Container $container = null;
+    /** @var Container|null */
+    private static $container;
 
     public static function get(): Container
     {

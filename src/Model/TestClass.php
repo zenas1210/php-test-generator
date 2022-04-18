@@ -9,24 +9,28 @@ use function Symfony\Component\String\u;
 
 class TestClass
 {
-    /**
-     * @var Method[]
-     */
-    private array $methods = [];
+    /** @var Method[] */
+    private $methods = [];
 
-    /**
-     * @var Use_[]
-     */
-    private array $uses = [];
-    private string $testPropertyName;
-    private ClassModel $class;
-    private string $shortName;
-    private string $namespace;
+    /** @var Use_[] */
+    private $uses = [];
+
+    /** @var string */
+    private $testPropertyName;
+
+    /** @var ClassModel */
+    private $class;
+
+    /** @var string */
+    private $shortName;
+
+    /** @var string */
+    private $namespace;
 
     public function __construct(ClassModel $class)
     {
         $this->class = $class;
-        $this->testPropertyName = u($class->getReflection()->getShortName())->camel()->toString();
+        $this->testPropertyName = lcfirst($class->getReflection()->getShortName());
     }
 
     public function getTestPropertyName(): string

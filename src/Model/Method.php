@@ -6,19 +6,35 @@ use ReflectionMethod;
 
 class Method
 {
-    /**
-     * @var Mock[]
-     */
-    private array $mocks = [];
-    private array $arguments = [];
-    private array $exceptions = [];
-    private bool $hasReturn = false;
-    private ReflectionMethod $reflection;
-    private ?string $returnType = null;
-    private ClassModel $class;
-    private TestClass $testClass;
-    private array $methodCalls = [];
-    private ?Method $parent = null;
+    /** @var Mock[] */
+    private $mocks = [];
+
+    /** @var array */
+    private $arguments = [];
+
+    /** @var array */
+    private $exceptions = [];
+
+    /** @var bool */
+    private $hasReturn = false;
+
+    /** @var ReflectionMethod */
+    private $reflection;
+
+    /** @var string|null */
+    private $returnType;
+
+    /** @var ClassModel */
+    private $class;
+
+    /** @var TestClass */
+    private $testClass;
+
+    /** @var array */
+    private $methodCalls = [];
+
+    /** @var Method|null */
+    private $parent;
 
     public function getArguments(): array
     {

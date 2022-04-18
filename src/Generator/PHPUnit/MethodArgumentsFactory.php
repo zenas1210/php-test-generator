@@ -3,10 +3,12 @@
 namespace Zenas\PHPTestGenerator\Generator\PHPUnit;
 
 use ReflectionMethod;
+use ReflectionUnionType;
 
 class MethodArgumentsFactory
 {
-    private ValueFactoryInterface $valueFactory;
+    /** @var ValueFactoryInterface */
+    private $valueFactory;
 
     public function __construct(ValueFactoryInterface $valueFactory)
     {
@@ -26,6 +28,11 @@ class MethodArgumentsFactory
 
             $type = $parameter->getType();
             if ($type && !$type->allowsNull()) {
+                if ($type instanceof ReflectionUnionType) {
+                    $types = $type->getTypes();
+                    $type = reset($types);
+                }
+
                 $arguments[$parameter->getName()] = $this->valueFactory->getValueForType($type->getName());
             }
         }

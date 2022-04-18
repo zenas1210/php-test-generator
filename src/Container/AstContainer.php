@@ -11,17 +11,14 @@ use UnexpectedValueException;
 
 class AstContainer
 {
-    /**
-     * @var ClassMethod[]
-     */
-    private array $methods;
+    /** @var ClassMethod[] */
+    private $methods;
 
-    /**
-     * @var Use_[]
-     */
-    private array $uses;
+    /** @var Use_[] */
+    private $uses;
 
-    private ?AstContainer $parentContainer;
+    /** @var AstContainer|null */
+    private $parentContainer;
 
     public function getAlias(string $class): ?string
     {

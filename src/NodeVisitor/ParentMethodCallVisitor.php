@@ -8,7 +8,8 @@ use Zenas\PHPTestGenerator\Model\Method;
 
 class ParentMethodCallVisitor extends NodeVisitorAbstract
 {
-    private Method $method;
+    /** @var Method */
+    private $method;
 
     public function __construct(Method $method)
     {

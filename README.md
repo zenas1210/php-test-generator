@@ -2,20 +2,14 @@
 
 Generates PHP unit tests
 
-1. Add this to your composer.json
-```json
-"repositories": [
-    {
-        "type": "vcs",
-        "url": "https://github.com/zenas1210/php-test-generator"
-    }
-]
-```
+### Installation
 
-2. Run `composer require --dev zenas/php-test-generator dev-master`
+1. Run `wget -O generate-php-test https://github.com/zenas1210/php-test-generator/raw/master/php-test-generator.phar`
 
-So far it just assumes `src` as root directory of PHP classes and `App` as root namespace.
+The phar package can be stored anywhere as long as it's executed from the root directory of your application.
 
-Usage example: `vendor/bin/generate-php-test App\TestedService`
+### Usage
 
-`TestedServiceTest.php` will appear in `tests` directory
+Run `php generate-php-test App\TestedService`
+
+`TestedServiceTest.php` will appear in tests directory resolved from composer.json, or `tests` if unable to resolve.

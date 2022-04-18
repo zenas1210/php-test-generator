@@ -19,12 +19,23 @@ use Zenas\PHPTestGenerator\Resolver\ShortClassNameResolver;
 
 class ClassAnalyzer
 {
-    public ReflectionClass $reflection;
-    private PHPUnitTestClassGenerator $classGenerator;
-    private ShortClassNameResolver $shortClassNameProvider;
-    private ClassModelFactory $classModelFactory;
-    private AstContainerFactory $astContainerFactory;
-    private MethodAnalyzer $methodAnalyzer;
+    /** @var ReflectionClass */
+    public $reflection;
+
+    /** @var PHPUnitTestClassGenerator  */
+    private $classGenerator;
+
+    /** @var ShortClassNameResolver */
+    private $shortClassNameProvider;
+
+    /** @var ClassModelFactory */
+    private $classModelFactory;
+
+    /** @var AstContainerFactory */
+    private $astContainerFactory;
+
+    /** @var MethodAnalyzer */
+    private $methodAnalyzer;
 
     public function __construct(
         ShortClassNameResolver    $shortClassNameProvider,

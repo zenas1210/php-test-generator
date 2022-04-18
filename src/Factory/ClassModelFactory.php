@@ -11,9 +11,14 @@ use Zenas\PHPTestGenerator\Model\ClassModel;
 
 class ClassModelFactory
 {
-    private PropertyFactory $propertyMetadataFactory;
-    private PropertyAssignmentMapFactory $propertyMapFactory;
-    private ParameterFactory $parameterFactory;
+    /** @var PropertyFactory */
+    private $propertyMetadataFactory;
+
+    /** @var PropertyAssignmentMapFactory */
+    private $propertyMapFactory;
+
+    /** @var ParameterFactory */
+    private $parameterFactory;
 
     public function __construct(
         PropertyFactory               $propertyMetadataFactory,

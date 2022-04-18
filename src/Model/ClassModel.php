@@ -9,22 +9,17 @@ use ReflectionMethod;
 
 class ClassModel
 {
-    private ReflectionClass $reflection;
+    /** @var ReflectionClass */
+    private $reflection;
 
-    /**
-     * @var Property[]
-     */
-    private array $properties;
+    /** @var Property[] */
+    private $properties;
 
-    /**
-     * @var ReflectionMethod[]
-     */
-    private array $methods;
+    /** @var ReflectionMethod[] */
+    private $methods;
 
-    /**
-     * @var Parameter[]
-     */
-    private array $constructorParameters;
+    /** @var Parameter[] */
+    private $constructorParameters;
 
     public function getReflection(): ReflectionClass
     {

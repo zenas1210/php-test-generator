@@ -7,8 +7,11 @@ use Symfony\Component\PropertyInfo\Type;
 
 class Parameter
 {
-    private ReflectionParameter $reflection;
-    private ?Type $type = null;
+    /** @var ReflectionParameter */
+    private $reflection;
+
+    /** @var Type|null */
+    private $type;
 
     public function getReflection(): ReflectionParameter
     {

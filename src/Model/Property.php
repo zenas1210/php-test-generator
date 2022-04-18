@@ -9,8 +9,11 @@ use Symfony\Component\PropertyInfo\Type;
 
 class Property
 {
-    private ReflectionProperty $reflection;
-    private ?Type $type = null;
+    /** @var ReflectionProperty */
+    private $reflection;
+
+    /** @var Type|null */
+    private $type;
 
     public function getReflection(): ReflectionProperty
     {

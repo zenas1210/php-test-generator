@@ -14,8 +14,11 @@ use Zenas\PHPTestGenerator\Container\AstContainer;
 
 class AstContainerFactory
 {
-    private NodeFinder $nodeFinder;
-    private ParserFactory $parserFactory;
+    /** @var NodeFinder */
+    private $nodeFinder;
+
+    /** @var ParserFactory */
+    private $parserFactory;
 
     public function __construct(NodeFinder $nodeFinder, ParserFactory $parserFactory)
     {
