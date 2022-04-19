@@ -1,0 +1,43 @@
+<?php
+
+declare (strict_types=1);
+
+namespace Tests\Fixtures;
+
+use Tests\Fixtures\ArrayCollection;
+use Tests\Fixtures\Collection;
+use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\MockObject\MockObject;
+use Tests\Fixtures\Dependency;
+
+class DependencyTest extends TestCase
+{
+    /** @var Dependency */
+    private $dependency;
+    public function testGetSpecific() : void
+    {
+        $expected = new ArrayCollection();
+        $result = $this->dependency->getSpecific();
+        $this->assertEquals($expected, $result);
+    }
+    public function testGetInterface() : void
+    {
+        $expected = $this->createMock(Collection::class);
+        $result = $this->dependency->getInterface();
+        $this->assertEquals($expected, $result);
+    }
+    public function testGetArray() : void
+    {
+        $expected = array();
+        $result = $this->dependency->getArray();
+        $this->assertEquals($expected, $result);
+    }
+    public function testValidate() : void
+    {
+        $this->dependency->validate();
+    }
+    protected function setUp() : void
+    {
+        $this->dependency = new Dependency();
+    }
+}

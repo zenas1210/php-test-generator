@@ -19,7 +19,7 @@ class TestClassWriter
         $this->filesystem = $filesystem;
     }
 
-    public function write(GeneratedTestClass $generatedTestClass, Configuration $configuration): string
+    public function write(GeneratedTestClass $generatedTestClass, Configuration $configuration, bool $overwrite): string
     {
         $writePath = $this->getWritePath($generatedTestClass, $configuration);
 
@@ -29,7 +29,7 @@ class TestClassWriter
             $this->filesystem->mkdir($writeDirectory);
         }
 
-        if ($this->filesystem->exists($writePath)) {
+        if (!$overwrite && $this->filesystem->exists($writePath)) {
             throw new RuntimeException(sprintf('Test class already exists at %s', $writePath));
         }
 

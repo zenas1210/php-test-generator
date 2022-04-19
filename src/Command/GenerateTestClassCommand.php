@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Zenas\PHPTestGenerator\Command;
@@ -49,31 +48,32 @@ class GenerateTestClassCommand extends Command
         $this
             ->setName('generate-test-class')
             ->setDescription('Generate a PHPUnit test class from a class.')
-            ->addArgument('class', InputArgument::REQUIRED, 'The class name to generate the test for.')
+            ->addArgument('classes', InputArgument::IS_ARRAY | InputArgument::REQUIRED, 'Classes to generate tests for.')
             ->addOption('namespace', 's', InputOption::VALUE_OPTIONAL, 'Root namespace of application classes', $defaultNamespace)
             ->addOption('test-namespace', 't', InputOption::VALUE_OPTIONAL, 'Root namespace of test classes', $defaultTestNamespace)
             ->addOption('test-dir', 'd', InputOption::VALUE_OPTIONAL, 'Root directory of test classes', $defaultTestDir)
+            ->addOption('overwrite', 'f', InputOption::VALUE_NONE, 'Overwrite existing test file/files')
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $className = (string) $input->getArgument('class');
-
         $namespace = (string) $input->getOption('namespace');
         $testNamespace = (string) $input->getOption('test-namespace');
         $testDirectory = (string) $input->getOption('test-dir');
-
-        $output->writeln(sprintf('Generating test class for <info>%s</info>', $className));
-        $output->writeln('');
+        $overwrite = $input->getOption('overwrite');
 
         $configuration = new Configuration($namespace, $testNamespace, $testDirectory);
 
-        $generatedTestClass = $this->analyzer->generate($configuration, $className);
+        foreach ($input->getArgument('classes') as $class) {
+            $output->writeln(sprintf('Generating test class for <info>%s</info>', $class));
+            $output->writeln('');
 
-        $writePath = $this->writer->write($generatedTestClass, $configuration);
+            $generatedTestClass = $this->analyzer->generate($configuration, $class);
+            $writePath = $this->writer->write($generatedTestClass, $configuration, $overwrite);
 
-        $output->writeln(sprintf('Test class written to <info>%s</info>', $writePath));
+            $output->writeln(sprintf('Test class written to <info>%s</info>', $writePath));
+        }
 
         return 0;
     }
