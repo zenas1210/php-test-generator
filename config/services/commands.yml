@@ -1,0 +1,8 @@
+services:
+    php_test_generator.command.generate_test_class:
+        public: true
+        class: Zenas\PHPTestGenerator\Command\GenerateTestClassCommand
+        tags: ['console.command']
+        arguments:
+            - '@php_test_generator.analyzer.class'
+            - '@php_test_generator.writer.test_class'

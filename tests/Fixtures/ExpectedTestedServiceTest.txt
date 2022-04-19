@@ -1,0 +1,49 @@
+<?php
+
+declare (strict_types=1);
+
+namespace Tests\Fixtures;
+
+use InvalidArgumentException;
+use Tests\Fixtures\Dependency;
+use Tests\Fixtures\Collection;
+use Tests\Fixtures\ArrayCollection;
+use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\MockObject\MockObject;
+use Tests\Fixtures\TestedService;
+
+class TestedServiceTest extends TestCase
+{
+    /** @var Dependency|MockObject */
+    private $provider;
+    /** @var array */
+    private $config;
+    /** @var TestedService */
+    private $testedService;
+    public function testDoSomething() : void
+    {
+        $interfaceCollection = $this->createMock(Collection::class);
+        $concreteCollection = new ArrayCollection();
+        $key = 'some string';
+        $this->provider->expects($this->atLeastOnce())->method('validate');
+        $mockedGetArray = array();
+        $this->provider->expects($this->atLeastOnce())->method('getArray')->willReturn($mockedGetArray);
+        $mockedGetSpecific = new ArrayCollection();
+        $this->provider->expects($this->atLeastOnce())->method('getSpecific')->willReturn($mockedGetSpecific);
+        $this->testedService->doSomething($interfaceCollection, $concreteCollection, $key);
+    }
+    public function testReturnSomething() : void
+    {
+        $throw = true;
+        $this->expectException(InvalidArgumentException::class);
+        $expected = 'some string';
+        $result = $this->testedService->returnSomething($throw);
+        $this->assertEquals($expected, $result);
+    }
+    protected function setUp() : void
+    {
+        $this->provider = $this->createMock(Dependency::class);
+        $this->config = array();
+        $this->testedService = new TestedService($this->provider, $this->config);
+    }
+}

@@ -3,3 +3,4 @@
 /build
 .php-cs-fixer.cache
 .idea
+var

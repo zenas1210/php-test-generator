@@ -9,11 +9,26 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Zenas\PHPTestGenerator\Analyzer\ClassAnalyzer;
 use Zenas\PHPTestGenerator\Configuration\Configuration;
-use Zenas\PHPTestGenerator\DependencyInjection\ContainerProvider;
+use Zenas\PHPTestGenerator\Writer\TestClassWriter;
 
 class GenerateTestClassCommand extends Command
 {
+    /** @var ClassAnalyzer */
+    private $analyzer;
+
+    /** @var TestClassWriter */
+    private $writer;
+
+    public function __construct(ClassAnalyzer $analyzer, TestClassWriter $writer)
+    {
+        parent::__construct();
+
+        $this->analyzer = $analyzer;
+        $this->writer = $writer;
+    }
+
     protected function configure(): void
     {
         $composerConfig = json_decode(file_get_contents('composer.json'), true);
@@ -54,13 +69,9 @@ class GenerateTestClassCommand extends Command
 
         $configuration = new Configuration($namespace, $testNamespace, $testDirectory);
 
-        $container = ContainerProvider::get();
-        $testClassGenerator = $container->get('php_test_generator.analyzer.class');
-        $writer = $container->get('php_test_generator.writer.test_class');
+        $generatedTestClass = $this->analyzer->generate($configuration, $className);
 
-        $generatedTestClass = $testClassGenerator->generate($configuration, $className);
-
-        $writePath = $writer->write($generatedTestClass, $configuration);
+        $writePath = $this->writer->write($generatedTestClass, $configuration);
 
         $output->writeln(sprintf('Test class written to <info>%s</info>', $writePath));
 
