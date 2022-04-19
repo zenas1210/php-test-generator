@@ -18,7 +18,7 @@ services:
         arguments:
             - '@php_test_generator.factory.builder'
             - '@php_test_generator.factory.chain_mock_value'
-            - '@php_test_generator.factory.method_arguments'
+            - '@php_test_generator.resolver.short_class_name'
 
     php_test_generator.generator.phpunit_test_class:
         class: Zenas\PHPTestGenerator\Generator\PHPUnit\PHPUnitTestClassGenerator
@@ -27,6 +27,7 @@ services:
             - '@php_test_generator.generator.phpunit_test_method'
             - '@php_test_generator.factory.chain_dependency_value'
             - '@php_test_generator.property_comment_generator'
+            - '@php_test_generator.factory.method_arguments'
 
     php_test_generator.analyzer.class:
         public: true

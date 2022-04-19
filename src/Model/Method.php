@@ -189,4 +189,9 @@ class Method
 
         return $this;
     }
+
+    public function hasNonVoidReturn(): bool
+    {
+        return $this->hasReturn() && !in_array($this->getReturnType(), [null, 'void']);
+    }
 }
