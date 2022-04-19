@@ -51,7 +51,7 @@ class ClassAnalyzer
         $this->methodAnalyzer = $methodAnalyzer;
     }
 
-    public function generate(Configuration $configuration, string $className): GeneratedTestClass
+    public function generate(Configuration $configuration, string $className, bool $dataProviders): GeneratedTestClass
     {
         $this->reflection = new ReflectionClass($className);
         $astContainer = $this->astContainerFactory->create($this->reflection);
@@ -60,15 +60,15 @@ class ClassAnalyzer
         $class->setUses($astContainer->getUses());
         $this->shortClassNameProvider->setClass($class);
 
-        $code = $this->generateTestClass($class, $configuration, $astContainer);
+        $code = $this->generateTestClass($class, $configuration, $astContainer, $dataProviders);
 
         return new GeneratedTestClass($class->getFQCN(), $code);
     }
 
-    private function generateTestClass(TestClass $class, Configuration $configuration, AstContainer $container): string
+    private function generateTestClass(TestClass $class, Configuration $configuration, AstContainer $container, bool $dataProviders): string
     {
         $this->addMethods($class, $container);
-        $nodes = $this->classGenerator->generate($class, $configuration);
+        $nodes = $this->classGenerator->generate($class, $configuration, $dataProviders);
 
         return (new Standard())->prettyPrintFile($nodes);
     }

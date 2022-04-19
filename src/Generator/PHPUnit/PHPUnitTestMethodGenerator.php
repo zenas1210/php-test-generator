@@ -1,15 +1,18 @@
 <?php
+declare(strict_types=1);
 
 namespace Zenas\PHPTestGenerator\Generator\PHPUnit;
 
+use Generator;
 use PhpParser\Builder\Method as ParserMethod;
 use PhpParser\BuilderFactory;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\Variable;
+use PhpParser\Node\Expr\Yield_;
 use PhpParser\Node\Stmt\Expression;
 use Zenas\PHPTestGenerator\Model\Method;
+use Zenas\PHPTestGenerator\Model\MethodGenerationContext;
 use Zenas\PHPTestGenerator\Model\Mock;
-use Zenas\PHPTestGenerator\Model\TestClass;
 
 class PHPUnitTestMethodGenerator
 {
@@ -19,42 +22,82 @@ class PHPUnitTestMethodGenerator
     /** @var ValueFactoryInterface */
     private $valueFactory;
 
-    /** @var MethodArgumentsFactory */
-    private $methodArgumentsFactory;
-
     public function __construct(
         BuilderFactory         $factory,
-        ValueFactoryInterface  $valueFactory,
-        MethodArgumentsFactory $methodArgumentsFactory
+        ValueFactoryInterface  $valueFactory
     ) {
         $this->factory = $factory;
         $this->valueFactory = $valueFactory;
-        $this->methodArgumentsFactory = $methodArgumentsFactory;
     }
 
-    public function generate(Method $method, TestClass $class): ParserMethod
+    public function generate(MethodGenerationContext $context): ParserMethod
     {
-        $builder = $this->getBaseBuilder($method);
+        $builder = $this->getBaseBuilder($context);
 
-        $arguments = $this->addArguments($method, $builder);
+        $method = $context->getMethod();
+        $arguments = $context->getArguments();
+
+        if (!$context->hasDataProviders()) {
+            $this->addArguments($builder, $arguments);
+        } elseif ($method->hasNonVoidReturn()) {
+            $builder->addParam($this->factory->param('expected'));
+        }
+
         $this->addMocks($method, $builder);
         $this->addExceptions($method, $builder);
-        $this->addAssertResult($method, $builder, $arguments, $class);
+        $this->addAssertResult($context, $builder);
+
+        if ($context->hasDataProviders()) {
+            $builder->setDocComment(sprintf("/**\n* @dataProvider %s\n*/", $this->getDataProviderName($context)));
+        }
 
         return $builder;
     }
 
-    public function getBaseBuilder(Method $method): ParserMethod
+    public function getDataProvider(MethodGenerationContext $context): ParserMethod
     {
-        return $this->factory->method('test' . ucfirst($method->getReflection()->getName()))
+        $method = $context->getMethod();
+        $arguments = $context->getArguments();
+
+        $builder = $this->factory->method($this->getDataProviderName($context))
             ->makePublic()
-            ->setReturnType('void');
+            ->setReturnType(Generator::class);
+
+        if ($method->hasNonVoidReturn()) {
+            $arguments['expected'] = $this->valueFactory->getValueForType($method->getReturnType());
+        }
+
+        $yield = new Yield_($this->factory->val($arguments));
+
+        $builder->addStmt($yield);
+
+        return $builder;
     }
 
-    public function addArguments(Method $method, ParserMethod $builder): array
+    public function getDataProviderName(MethodGenerationContext $context): string
     {
-        $arguments = $this->methodArgumentsFactory->getArgumentsForMethod($method->getReflection());
+        return $context->getMethod()->getReflection()->getName() . 'Provider';
+    }
 
+    public function getBaseBuilder(MethodGenerationContext $context): ParserMethod
+    {
+        $builder = $this->factory->method('test' . ucfirst($context->getMethod()->getReflection()->getName()))
+            ->makePublic()
+            ->setReturnType('void');
+
+        if (!$context->hasDataProviders()) {
+            return $builder;
+        }
+
+        foreach ($context->getArguments() as $name => $value) {
+            $builder->addParam($this->factory->param($name));
+        }
+
+        return $builder;
+    }
+
+    public function addArguments(ParserMethod $builder, array $arguments): void
+    {
         foreach ($arguments as $name => $value) {
             $builder->addStmt(
                 new Assign(
@@ -63,8 +106,6 @@ class PHPUnitTestMethodGenerator
                 )
             );
         }
-
-        return $arguments;
     }
 
     public function addMocks(Method $method, ParserMethod $builder): void
@@ -123,7 +164,7 @@ class PHPUnitTestMethodGenerator
         }
     }
 
-    public function addException(string $class, ParserMethod $builder)
+    public function addException(string $class, ParserMethod $builder): void
     {
         $builder->addStmt(
             new Expression(
@@ -136,12 +177,13 @@ class PHPUnitTestMethodGenerator
         );
     }
 
-    public function addAssertResult(Method $method, ParserMethod $builder, array $arguments, TestClass $class): void
+    public function addAssertResult(MethodGenerationContext $context, ParserMethod $builder): void
     {
+        $method = $context->getMethod();
         $reflection = $method->getReflection();
 
         $methodName = 'methodCall';
-        $var = $this->factory->var('this->' . $class->getTestPropertyName());
+        $var = $this->factory->var('this->' . $method->getTestClass()->getTestPropertyName());
 
         if ($reflection->isStatic()) {
             $methodName = 'staticCall';
@@ -151,10 +193,10 @@ class PHPUnitTestMethodGenerator
         $methodCall = $this->factory->$methodName(
             $var,
             $reflection->getName(),
-            $this->wrapArray($arguments)
+            $this->wrapArray($context->getArguments())
         );
 
-        if (!$method->hasReturn() || in_array($method->getReturnType(), [null, 'void'])) {
+        if (!$method->hasNonVoidReturn()) {
             $builder->addStmt($methodCall);
 
             return;
@@ -162,10 +204,14 @@ class PHPUnitTestMethodGenerator
 
         $expected = $this->factory->var('expected');
         $result = $this->factory->var('result');
-        $expectedValue = $this->valueFactory->getValueForType($method->getReturnType());
+
+        if (!$context->hasDataProviders()) {
+            $expectedValue = $this->valueFactory->getValueForType($method->getReturnType());
+
+            $builder->addStmt(new Assign($expected, $this->factory->val($expectedValue)));
+        }
 
         $builder
-            ->addStmt(new Assign($expected, $this->factory->val($expectedValue)))
             ->addStmt(new Assign($result, $methodCall))
             ->addStmt(
                 $this->factory->methodCall(

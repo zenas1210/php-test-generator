@@ -5,7 +5,6 @@ namespace Zenas\PHPTestGenerator\Model;
 use PhpParser\BuilderFactory;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Stmt\Use_;
-use function Symfony\Component\String\u;
 
 class TestClass
 {

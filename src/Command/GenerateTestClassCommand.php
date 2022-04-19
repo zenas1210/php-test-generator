@@ -53,6 +53,7 @@ class GenerateTestClassCommand extends Command
             ->addOption('test-namespace', 't', InputOption::VALUE_OPTIONAL, 'Root namespace of test classes', $defaultTestNamespace)
             ->addOption('test-dir', 'd', InputOption::VALUE_OPTIONAL, 'Root directory of test classes', $defaultTestDir)
             ->addOption('overwrite', 'f', InputOption::VALUE_NONE, 'Overwrite existing test file/files')
+            ->addOption('data-providers', 'p', InputOption::VALUE_NONE, 'Generate data providers')
         ;
     }
 
@@ -62,6 +63,7 @@ class GenerateTestClassCommand extends Command
         $testNamespace = (string) $input->getOption('test-namespace');
         $testDirectory = (string) $input->getOption('test-dir');
         $overwrite = $input->getOption('overwrite');
+        $dataProviders = $input->getOption('data-providers');
 
         $configuration = new Configuration($namespace, $testNamespace, $testDirectory);
 
@@ -69,7 +71,7 @@ class GenerateTestClassCommand extends Command
             $output->writeln(sprintf('Generating test class for <info>%s</info>', $class));
             $output->writeln('');
 
-            $generatedTestClass = $this->analyzer->generate($configuration, $class);
+            $generatedTestClass = $this->analyzer->generate($configuration, $class, $dataProviders);
             $writePath = $this->writer->write($generatedTestClass, $configuration, $overwrite);
 
             $output->writeln(sprintf('Test class written to <info>%s</info>', $writePath));

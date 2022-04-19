@@ -1,0 +1,59 @@
+<?php
+
+declare (strict_types=1);
+
+namespace Tests\Fixtures;
+
+use InvalidArgumentException;
+use Tests\Fixtures\Dependency;
+use Tests\Fixtures\Collection;
+use Tests\Fixtures\ArrayCollection;
+use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\MockObject\MockObject;
+use Tests\Fixtures\TestedService;
+use Generator;
+
+class TestedServiceTest extends TestCase
+{
+    /** @var Dependency|MockObject */
+    private $provider;
+    /** @var array */
+    private $config;
+    /** @var TestedService */
+    private $testedService;
+    /**
+    * @dataProvider doSomethingProvider
+    */
+    public function testDoSomething($interfaceCollection, $concreteCollection, $key) : void
+    {
+        $this->provider->expects($this->atLeastOnce())->method('validate');
+        $mockedGetArray = array();
+        $this->provider->expects($this->atLeastOnce())->method('getArray')->willReturn($mockedGetArray);
+        $mockedGetSpecific = new ArrayCollection();
+        $this->provider->expects($this->atLeastOnce())->method('getSpecific')->willReturn($mockedGetSpecific);
+        $this->testedService->doSomething($interfaceCollection, $concreteCollection, $key);
+    }
+    public function doSomethingProvider() : Generator
+    {
+        (yield array('interfaceCollection' => $this->createMock(Collection::class), 'concreteCollection' => new ArrayCollection(), 'key' => 'some string'));
+    }
+    /**
+    * @dataProvider returnSomethingProvider
+    */
+    public function testReturnSomething($throw, $expected) : void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $result = $this->testedService->returnSomething($throw);
+        $this->assertEquals($expected, $result);
+    }
+    public function returnSomethingProvider() : Generator
+    {
+        (yield array('throw' => true, 'expected' => 'some string'));
+    }
+    protected function setUp() : void
+    {
+        $this->provider = $this->createMock(Dependency::class);
+        $this->config = array();
+        $this->testedService = new TestedService($this->provider, $this->config);
+    }
+}

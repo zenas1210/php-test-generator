@@ -1,7 +1,9 @@
 <?php
+declare(strict_types=1);
 
 namespace Zenas\PHPTestGenerator\Generator\PHPUnit;
 
+use Generator;
 use PhpParser\Builder\Class_;
 use PhpParser\BuilderFactory;
 use PhpParser\Node\Expr\Assign;
@@ -11,6 +13,7 @@ use PhpParser\Node\Stmt\Nop;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Zenas\PHPTestGenerator\Configuration\Configuration;
+use Zenas\PHPTestGenerator\Model\MethodGenerationContext;
 use Zenas\PHPTestGenerator\Model\TestClass;
 
 class PHPUnitTestClassGenerator
@@ -27,19 +30,24 @@ class PHPUnitTestClassGenerator
     /** @var PropertyCommentGenerator */
     private $commentGenerator;
 
+    /** @var MethodArgumentsFactory */
+    private $methodArgumentsFactory;
+
     public function __construct(
         BuilderFactory             $factory,
         PHPUnitTestMethodGenerator $methodGenerator,
         ValueFactoryInterface      $valueFactory,
-        PropertyCommentGenerator   $commentGenerator
+        PropertyCommentGenerator   $commentGenerator,
+        MethodArgumentsFactory     $methodArgumentsFactory
     ) {
         $this->factory = $factory;
         $this->methodGenerator = $methodGenerator;
         $this->valueFactory = $valueFactory;
         $this->commentGenerator = $commentGenerator;
+        $this->methodArgumentsFactory = $methodArgumentsFactory;
     }
 
-    public function generate(TestClass $class, Configuration $configuration): array
+    public function generate(TestClass $class, Configuration $configuration, bool $dataProviders): array
     {
         $testNamespace = str_replace(
             $configuration->getSourceNamespace(),
@@ -57,18 +65,22 @@ class PHPUnitTestClassGenerator
             ->extend('TestCase');
 
         $this->addProperties($class, $builder);
-        $this->addMethods($class, $builder);
+        $this->addMethods($class, $builder, $dataProviders);
         $this->addSetupMethod($class, $builder);
+
+        $uses = [
+            $this->factory->use(TestCase::class),
+            $this->factory->use(MockObject::class),
+            $this->factory->use($class->getClass()->getReflection()->getName()),
+        ];
+
+        if ($dataProviders) {
+            $uses[] = $this->factory->use(Generator::class);
+        }
 
         $nsBuilder
             ->addStmts($class->getUses())
-            ->addStmts(
-                [
-                    $this->factory->use(TestCase::class),
-                    $this->factory->use(MockObject::class),
-                    $this->factory->use($class->getClass()->getReflection()->getName()),
-                ]
-            )
+            ->addStmts($uses)
             ->addStmt(new Nop())
             ->addStmt($builder);
 
@@ -105,11 +117,17 @@ class PHPUnitTestClassGenerator
         );
     }
 
-    public function addMethods(TestClass $class, Class_ $builder): void
+    public function addMethods(TestClass $class, Class_ $builder, bool $dataProviders): void
     {
         foreach ($class->getMethods() as $method) {
             if ($method->isTestable()) {
-                $builder->addStmt($this->methodGenerator->generate($method, $class));
+                $arguments = $this->methodArgumentsFactory->getArgumentsForMethod($method->getReflection());
+                $context = new MethodGenerationContext($method, $arguments, $dataProviders);
+
+                $builder->addStmt($this->methodGenerator->generate($context));
+                if ($dataProviders) {
+                    $builder->addStmt($this->methodGenerator->getDataProvider($context));
+                }
             }
         }
     }
