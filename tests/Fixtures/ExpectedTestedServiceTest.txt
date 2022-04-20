@@ -40,6 +40,17 @@ class TestedServiceTest extends TestCase
         $result = $this->testedService->returnSomething($throw);
         $this->assertEquals($expected, $result);
     }
+    public function testMethodWithReturnNoArguments() : void
+    {
+        $expected = array();
+        $result = $this->testedService->methodWithReturnNoArguments();
+        $this->assertEquals($expected, $result);
+    }
+    public function testMethodWithNoReturnNoArguments() : void
+    {
+        $this->provider->expects($this->atLeastOnce())->method('validate');
+        $this->testedService->methodWithNoReturnNoArguments();
+    }
     protected function setUp() : void
     {
         $this->provider = $this->createMock(Dependency::class);

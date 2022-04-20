@@ -122,6 +122,7 @@ class PHPUnitTestClassGenerator
         foreach ($class->getMethods() as $method) {
             if ($method->isTestable()) {
                 $arguments = $this->methodArgumentsFactory->getArgumentsForMethod($method->getReflection());
+                $dataProviders = $dataProviders && ([] !== $arguments || $method->hasNonVoidReturn());
                 $context = new MethodGenerationContext($method, $arguments, $dataProviders);
 
                 $builder->addStmt($this->methodGenerator->generate($context));

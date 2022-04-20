@@ -50,6 +50,23 @@ class TestedServiceTest extends TestCase
     {
         (yield array('throw' => true, 'expected' => 'some string'));
     }
+    /**
+    * @dataProvider methodWithReturnNoArgumentsProvider
+    */
+    public function testMethodWithReturnNoArguments($expected) : void
+    {
+        $result = $this->testedService->methodWithReturnNoArguments();
+        $this->assertEquals($expected, $result);
+    }
+    public function methodWithReturnNoArgumentsProvider() : Generator
+    {
+        (yield array('expected' => array()));
+    }
+    public function testMethodWithNoReturnNoArguments() : void
+    {
+        $this->provider->expects($this->atLeastOnce())->method('validate');
+        $this->testedService->methodWithNoReturnNoArguments();
+    }
     protected function setUp() : void
     {
         $this->provider = $this->createMock(Dependency::class);

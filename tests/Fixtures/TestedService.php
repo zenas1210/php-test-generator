@@ -35,4 +35,14 @@ class TestedService
 
         return 'something';
     }
+
+    public function methodWithReturnNoArguments(): array
+    {
+        return [1, 2, 3];
+    }
+
+    public function methodWithNoReturnNoArguments()
+    {
+        $this->provider->validate();
+    }
 }
