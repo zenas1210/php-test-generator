@@ -11,7 +11,6 @@ services:
         class: Zenas\PHPTestGenerator\Factory\PropertyFactory
         arguments:
             - '@php_test_generator.extractor.property_info_extractor'
-            - '@php_test_generator.factory.type'
 
     php_test_generator.factory.class_model:
         class: Zenas\PHPTestGenerator\Factory\ClassModelFactory
